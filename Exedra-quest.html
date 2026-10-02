@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Judul Cerita</title>
+<style>
+@font-face{font-family:"Newcinema";src:url("font/Newcinema.ttf") format("truetype");font-weight:normal;font-style:normal;font-display:swap}
+:root{
+  --bg:#05060f;
+  --bg-2:#0b0f24;
+  --surface:#111739;
+  --surface-2:#1a2050;
+  --text:#e6e9ff;
+  --text-2:#a9b0e6;
+  --accent:#8f9cf0;
+  --accent-2:#5b67d1;
+  --silver:#9a9cab;
+  --glow:rgba(143,156,240,.45);
+  --nebula:#b5643f;
+  --nebula-2:#8a3f7a;
+  --star:#ffffff;
+  --serif:"Newcinema",Georgia,"Times New Roman",serif;
+  --body:"Newcinema",Georgia,Cambria,"Times New Roman",serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+*,*::before,*::after{box-sizing:inherit}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{
+  margin:0;min-height:100%;overflow-x:hidden;color:var(--text);
+  font-family:var(--body);font-size:18px;line-height:1.8;
+  background:
+    radial-gradient(60% 40% at 85% 0%,rgba(138,63,122,.16),transparent 70%),
+    radial-gradient(50% 35% at 5% 100%,rgba(181,100,63,.10),transparent 70%),
+    linear-gradient(180deg,var(--bg-2),var(--bg) 60%);
+  background-color:var(--bg);background-attachment:fixed;
+}
+#stars{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.star{fill:var(--star);animation:tw 4s ease-in-out infinite}
+@keyframes tw{0%,100%{opacity:.15}50%{opacity:.9}}
+.ring{position:fixed;z-index:0;border-radius:50%;border:1px solid var(--accent-2);
+  box-shadow:0 0 40px var(--glow),inset 0 0 40px rgba(91,103,209,.15);opacity:.35;pointer-events:none}
+.ring.a{width:min(120vw,760px);height:min(120vw,760px);right:-30%;top:-15%}
+.ring.b{width:min(70vw,420px);height:min(70vw,420px);left:-25%;bottom:-10%;opacity:.22}
+
+.progress{position:fixed;top:0;left:0;right:0;height:3px;z-index:20;background:transparent;padding-top:env(safe-area-inset-top,0px)}
+.progress i{display:block;height:3px;width:0;background:linear-gradient(90deg,var(--accent-2),var(--accent));box-shadow:0 0 10px var(--glow);transition:width .5s ease}
+
+#app{position:relative;z-index:1;max-width:680px;margin:0 auto;padding:56px 22px 48px}
+.view{display:none}
+.view.on{display:block;animation:fade .7s ease both}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+
+h1,h2{font-family:var(--serif);font-weight:600;line-height:1.1;margin:0;letter-spacing:.01em}
+.hero{min-height:70vh;display:flex;flex-direction:column;justify-content:center;text-align:center;align-items:center}
+.hero h1{font-size:clamp(3rem,13vw,5.2rem);text-shadow:0 0 30px var(--glow)}
+.tagline{color:var(--text-2);margin:18px 0 32px;max-width:26em}
+.genre{color:var(--silver);font-size:.9rem;margin-top:0}
+
+button{font:inherit;cursor:pointer}
+.btn{background:var(--surface-2);color:var(--text);border:1px solid var(--accent-2);border-radius:999px;
+  padding:12px 28px;min-height:44px;font-size:1rem;transition:box-shadow .3s,background .3s}
+.btn:hover{background:var(--accent-2);box-shadow:0 0 22px var(--glow)}
+.btn:disabled{opacity:.35;cursor:default;box-shadow:none;background:var(--surface-2)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+
+.toc{list-style:none;margin:40px 0 0;padding:0;border-top:1px solid var(--surface-2);width:100%;text-align:left}
+.toc li{border-bottom:1px solid var(--surface-2)}
+.toc button{all:unset;box-sizing:border-box;display:flex;gap:16px;align-items:baseline;width:100%;padding:14px 4px;cursor:pointer;color:var(--text-2);min-height:44px}
+.toc button:hover{color:var(--text)}
+.toc button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.toc .n{font-family:var(--serif);font-size:1.3rem;color:var(--accent);min-width:1.6em}
+.toc .cur{color:var(--text)}
+
+.chapter .num{font-family:var(--serif);color:var(--accent);font-size:1.15rem;margin:0 0 6px}
+.chapter h2{font-size:clamp(2.1rem,8vw,3rem);margin-bottom:28px;text-shadow:0 0 24px var(--glow)}
+.chapter p{margin:0 0 1.3em;color:var(--text)}
+.chapter .num{margin-top:0}
+.chapter h3{font-family:var(--serif);font-weight:600;font-size:1.7rem;line-height:1.2;color:var(--accent);margin:2.2em 0 .7em}
+.chapter em{color:var(--text-2)}
+#chapterContent{display:block;min-height:40vh}
+.navigation{display:flex;gap:10px;align-items:center;margin-top:44px}
+.navigation button{background:var(--surface-2);color:var(--text);border:1px solid var(--accent-2);border-radius:999px;
+  padding:10px 18px;min-height:44px;font-size:1rem;transition:box-shadow .3s,background .3s}
+.navigation button:hover{background:var(--accent-2);box-shadow:0 0 22px var(--glow)}
+.navigation button.disabled{opacity:.35;pointer-events:none;box-shadow:none}
+.navigation select{flex:1;min-width:0;min-height:44px;font:inherit;font-size:.95rem;color:var(--text);
+  background:var(--surface);border:1px solid var(--accent-2);border-radius:999px;padding:8px 14px;text-overflow:ellipsis}
+.navigation select option{background:var(--surface);color:var(--text)}
+.end{text-align:center;padding-top:16vh}
+.end h2{font-size:clamp(2.4rem,10vw,3.6rem);text-shadow:0 0 30px var(--glow)}
+.end p{color:var(--text-2);margin:16px 0 30px}
+.end .btn+.btn{margin-left:8px}
+
+
+@media (prefers-color-scheme:light){:root{color-scheme:dark}}
+@media (prefers-reduced-motion:reduce){
+  .star{animation:none;opacity:.5}
+  .view.on{animation:none}
+  .progress i{transition:none}
+  *{scroll-behavior:auto!important}
+}
+</style>
+</head>
+<body>
+<svg id="stars" aria-hidden="true"></svg>
+<div class="ring a" aria-hidden="true"></div>
+<div class="ring b" aria-hidden="true"></div>
+<div class="progress" aria-hidden="true"><i id="bar"></i></div>
+
+<div id="app">
+  <section class="view hero" id="v-home">
+    <p class="genre">MAGIA EXEDRA</p>
+    <h1>Exedra Quest</h1>
+    <p class="tagline">Exedra Quest adalah cerita utama dalam Magia Exedra yang berpusat pada Gadis Tanpa Nama (Namae) dan Lighthouse.</p>
+    <button class="btn" id="start">Mulai Membaca</button>
+    <ul class="toc" id="toc-home"></ul>
+  </section>
+
+  <article class="view chapter" id="v-chap" aria-live="polite">
+    <main id="chapterContent">
+      <!-- Chapter akan muncul di sini -->
+    </main>
+
+    <div class="navigation">
+      <button id="prevBtn" class="disabled">Previous</button>
+      <select id="jumpSelect" aria-label="Loncat ke chapter"></select>
+      <button id="nextBtn">Next</button>
+    </div>
+  </article>
+
+  <section class="view end" id="v-end">
+    <h2>Tamat</h2>
+    <p>Terima kasih sudah membaca Judul Cerita.</p>
+    <button class="btn" id="again">Baca dari awal</button>
+    <button class="btn" id="back">Chapter terakhir</button>
+  </section>
+</div>
+
+<script>
+(function(){
+  var N=5,KEY="cerita-posisi";
+  // Isi tiap chapter: tulis paragraf di dalam array p (satu string = satu paragraf)
+  var isi=[
+    [
+      "Di dekat celah misterius itu, Namae berjingkat pelan. Selama ia tidak terlalu dekat, seharusnya aman. Tiba-tiba sesuatu mengepak di belakangnya dan ia menjerit, tapi ternyata itu cuma Nighthawk, burung kecil yang selalu mengikutinya.",
+      "\"Jangan bilang ke A-Q aku ke sini, ya,\" bisik Namae.",
+      "Burung itu berkicau sekenanya. Namae menatap celah tersebut. Celah itu tidak melebar, tetapi tanah bergetar lagi, dan ia merasakan sesuatu di seberang sana, mungkin seorang Witch. Nighthawk berkicau riuh, seolah menyuruhnya melawan makhluk itu. Namae ragu, lalu teringat kejadian beberapa waktu lalu.",
+      "Saat itu A-Q berdiri di hadapan mereka berdua dengan wajah dingin. \"Kalian sadar apa yang sudah kalian lakukan?\"",
+      "Mereka hanya bermain-main, tetapi lukisan A-Q rusak. Sang seniman menghela napas panjang. Ia sudah bosan karena tak ada hal menegangkan belakangan ini, dan sekarang karyanya hancur.",
+      "\"Lukis lagi saja?\" usul Namae.",
+      "\"Jangan meremehkan seni,\" jawab A-Q. Karya tidak bisa dibuat dua kali persis sama, apalagi pigmen lukisan itu hanya bisa didapat dari seorang Witch tak lazim. Witch semacam itu jauh lebih kuat daripada Witch di Windows. Bahkan bersama semua versi dirinya dari dunia paralel, Namae takkan menang. Ia harus membawa seluruh Kioku-nya untuk sekadar punya peluang.",
+      "Namae mendengus. Manusia memang jadi keras kepala kalau dibilang tak mampu, pikir A-Q dengan geli. Celah aneh yang muncul bersamaan dengan kedatangan Namae, Witch di dalamnya yang bukan buatan Windows, dan kutukan dari Witch yang tersesat dari cahaya Lighthouse: peristiwa apa yang akan dipicunya?",
+      "A-Q tertawa. Kebohongan kecil tak pernah menyakiti siapa pun, katanya.",
+      "## Episode 1",
+      "Getaran itu datang lagi, kali ini jauh lebih kuat. Namae tersentak. \"Nighthawk... itu artinya ada Witch muncul di dalam celah.\"",
+      "Ia ingin mengejutkan A-Q, jadi ia harus bertarung diam-diam. Tapi firasatnya buruk. Witch itu terasa sangat kuat.",
+      "\"Kenapa tiba-tiba jadi penakut?\"",
+      "Namae terlonjak. A-Q sudah berdiri di sana! Ternyata ia tahu semuanya sejak awal. \"Kamu bisa bilang dari tadi...\"",
+      "\"Melihatmu menghibur sekali,\" kata A-Q. Tetapi ia melanjutkan dengan serius: hanya Namae yang bisa menyeberang, dan krisis di Lighthouse tak akan selesai sendiri. Apakah Namae akan bertarung? Itu tergantung seberapa besar keinginannya melindungi Lighthouse.",
+      "\"Kalau begitu, aku berangkat!\"",
+      "## Episode 2",
+      "Cukup lama Namae menghilang. Saat kembali, A-Q hampir menyambutnya dengan lega, tetapi ia terdiam melihat kondisinya. Namae terkapar kelelahan. Belum pernah ia terlihat sepayah ini.",
+      "\"Semuanya serba *wham*, lalu *blam*,\" rengeknya. Kioku yang ikut bertarung banyak sekali, sehingga suasana lebih kacau dari biasanya. Sambil terengah, ia bergumam bahwa andai bisa bicara dengan para Kioku, ia bisa belajar banyak hal selain emosi dari Memspark, dan mungkin bertarung akan lebih mudah.",
+      "Lampu tiba-tiba padam. Nighthawk memekik. \"Tenang, diam di tempat,\" ujar A-Q.",
+      "Ketika cahaya menyala kembali, Namae menjerit. Para Kioku ada di sana, nyata dan hidup, berdiri di dalam Lighthouse!",
+      "\"Ini situasi yang sangat ganjil,\" gumam A-Q.",
+      "Tetapi Namae sudah berseri-seri. Sekarang ia bisa bicara dengan mereka, bertarung lebih baik, bahkan berteman! \"Bukankah ini bikin kamu ingin tersenyum, A-Q?\"",
+      "\"Tahan dulu. Ini bukan hal yang lucu,\" tegur A-Q. \"Lihat sekelilingmu.\"",
+      "Namae memandang sekitar, dan barulah ia sadar. Seluruh Lighthouse tampak buram dan redup.",
+      "\"Kamu tahu betapa pentingnya bagian 'cahaya' dari Lighthouse,\" kata A-Q pelan. Memsparks adalah inti pengalaman seorang Magical Girl, bukti bahwa mereka pernah ada. Kalau hilang, ingatan tentang keberadaan mereka bisa lenyap dari alam semesta.",
+      "\"Karena itu aku mau melindunginya,\" jawab Namae, \"dengan mengumpulkan semuanya.\"",
+      "\"Kalau ada yang salah dengan Memsparks, kita dalam masalah. Ayo kita periksa dulu.\"",
+      "## Episode 3",
+      "Di antara para Kioku, seorang gadis bernama Sayaka terbaring tak sadarkan diri. Namae mengguncangnya dan memanggil, tetapi Sayaka tak bangun. Nighthawk berkicau sedih.",
+      "\"Tak kusangka secepat ini memburuk,\" gumam A-Q. Ia mengingatkan Namae pada Memspark aneh yang mereka lihat sebelumnya. Mungkin Memspark itu digerogoti sesuatu, dan itulah yang menyebabkan Kioku terkena dampaknya.",
+      "\"Itu buruk, kan?\"",
+      "\"Tentu saja!\" seru A-Q. Memsparks tak tergantikan dan tak boleh diganggu apa pun, tetapi kini ada sesuatu yang berani melanggar prinsip itu. Ini bukti bahwa sesuatu di luar bayangan sedang terjadi.",
+      "\"Kamu kelihatan senang, A-Q...\"",
+      "\"Aku tidak senang, hanya sangat tertarik,\" elaknya. Tetapi ia mengakui bahwa ini bisa mengancam keberlangsungan Lighthouse. Kalau kerusakan itu sudah menyebar ke luar, mereka dalam bahaya besar.",
+      "\"Kita harus bergegas. Aku akan membuat gerbang menuju Memspark itu. Kamu masuk, dan cari tahu apa yang terjadi di dalam.\"",
+      "\"Sendirian? Aku khawatir, A-Q.\"",
+      "\"Ke tempat itu aku tak bisa ikut. Hanya kamu yang bisa,\" ujar A-Q. \"Tapi rencana ini hanya berhasil kalau kita melakukannya bersama.\" Ia menatap Namae dengan yakin. Setelah mengumpulkan begitu banyak Memsparks, Namae pasti mampu menyelamatkan para Kioku dan melindungi para Magical Girl beserta Lighthouse.",
+      "Namae mengangguk mantap. \"Baik! Aku akan menyelamatkan semuanya!\"",
+      "## Episode 4",
+      "Namun Memspark di hadapan mereka kini gelap, dan Namae merasakan sesuatu yang salah di luar Lighthouse.",
+      "\"Sepertinya Memspark ini sedang dimakan sesuatu,\" kata A-Q. \"Kalau dibiarkan, Kiokunya juga akan terkena.\" Ia bergumam, apakah ini darklight? Bukan, bukan cemar biasa. Dan kalau sudah merembet keluar Lighthouse...",
+      "\"Kalau Memspark atau Lighthouse dalam bahaya, aku akan menyelamatkan dan melindunginya!\"",
+      "\"Itu baru semangat.\"",
+      "\"Tapi bagaimana caranya?\"",
+      "A-Q berpikir sejenak. Ada satu ide yang sudah lama ia simpan, tetapi belum pernah dicoba: menggabungkan kekuatannya dengan kekuatan Namae. Barangkali itu bisa menghasilkan sesuatu. Nighthawk memekik, dan sesuatu bergerak di bawah sana. Mereka pergi memeriksanya.",
+      "Tak lama kemudian, gerbang itu selesai. \"Di sinilah kamu masuk ke dalam Memspark,\" kata A-Q. \"Dengarkan baik-baik, tak ada yang tahu apa yang bakal terjadi di dalam. Situasi ini di luar dugaanku. Tapi para Kioku akan menemanimu, jadi seharusnya kamu baik-baik saja.\"",
+      "\"Iya!\"",
+      "Namae hendak melangkah, tetapi berhenti. Ada perasaan aneh yang merayapinya, seolah ia merasakan dirinya sendiri di seberang sana. Ia terdiam.",
+      "\"Kenapa? Cepat!\"",
+      "\"Ah! Iya!\"",
+      "\"Kiokumu sudah dibawa semua?\"",
+      "\"Aaah! Sudah!\"",
+      "\"Bagus. Tarik napas dalam-dalam.\"",
+      "Namae menarik napas, lalu menghembuskannya perlahan.",
+      "\"Nah. Pergilah. Aku menunggu.\"",
+      "\"Sampai jumpa nanti!\"",
+      "Namae melompat masuk ke gerbang dan menghilang.",
+      "## Epilog",
+      "Setelah ia pergi, A-Q berdiri sendirian di depan gerbang itu. \"Fiuh. Gerbangnya ternyata berhasil.\"",
+      "Namun senyumnya berubah tipis saat ia menghitung kejadian belakangan ini: Kioku yang hidup, Memspark yang ganjil, dan Kioku yang mendadak tumbang. Semua gangguan itu menumpuk sejak Namae datang.",
+      "\"Kalau ternyata dia penyebab semua ini...\"",
+      "A-Q tertawa pelan. \"Itu akan sangat *magnifico*!\""
+    ],
+    [
+      "## Episode 1",
+      "Namae pernah menjadi seorang Magical Girl. Hanya itu yang ia ingat, tidak lebih. Dulu ia kosong, sampai A-Q memberinya nama, dan sejak itu ia menjadi dirinya sendiri. Ia ingin melindungi Lighthouse, dan ia ingin melindungi para Magical Girl.",
+      "Suara asing menyeretnya kembali ke kesadaran. \"Hei, Red, akhirnya dia bangun!\"",
+      "\"Kioku?!\" seru Namae.",
+      "Kyoko Sakura mengernyit. \"Masih setengah tidur, ya?\"",
+      "\"Kamu sendiri yang membawa kami ke sini,\" sahut Felicia Mitsuki.",
+      "Suara A-Q bergema di kepala Namae lewat telepati. Ia memastikan Namae mengingat semuanya: mereka berada di dalam Memspark, dan Kioku Sayaka Miki runtuh setelah Darklight menggerogoti Memspark itu. Felicia mendengus tak terima ketika A-Q menggerutu bahwa dari sekian Kioku, ia justru kebagian Felicia. Waktu memilih memang sempit.",
+      "Lalu A-Q menjelaskan bahwa Kioku adalah inti seorang Magical Girl. Kalau Kioku Sayaka runtuh, keberadaannya goyah dan suatu hari ia bisa lenyap. Tempat ini mengikat semua semesta, jadi lenyapnya satu Kioku bisa menghapus gadis itu dari setiap dunia. Kalau Darklight dibiarkan, ia bisa menghapus semua Magical Girl di seluruh semesta.",
+      "\"Jadi kita apakan Sayaka?\" tanya Namae.",
+      "\"Dibanting saja, lihat dia bangun atau tidak?\" usul Felicia.",
+      "A-Q menghela napas. Ia sendiri belum tahu. Sayaka mungkin bukan penyebabnya, sebab bisa jadi ada faktor lain. Tetapi karena gerbang menuju Memspark ini bermuara di Mitakihara, sumber masalahnya pasti ada di kota itu. Mereka harus menyelidikinya dan melindungi Lighthouse.",
+      "Felicia mengaku mereka memang sudah terjebak. Kyoko menambahkan bahwa melindungi Namae adalah tugas mereka. A-Q menegaskan bahwa Namae kini menggantikannya sebagai Penjaga Lighthouse, dan para Kioku wajib membantunya.",
+      "\"Tapi kalau soal yang penting, ambil keputusan yang benar, ya,\" pesan Kyoko. \"Demi kami semua.\"",
+      "\"Iya,\" jawab Namae. \"Terima kasih sudah menerimaku, Felicia, Kyoko.\"",
+      "\"Selamat bergabung, Penjaga Lighthouse,\" kata Kyoko sambil tersenyum tipis.",
+      "Mereka sepakat menemui Mami Tomoe, senior yang pasti tahu sesuatu. Kata Kyoko, langsung mendatangi Sayaka bisa berbahaya. A-Q memperingatkan bahwa Mitakihara ini menyimpang dan berbeda dari yang mereka kenal, jadi jangan terlalu percaya pada ingatan sendiri.",
+      "Kota itu tampak biasa saja. \"Padahal aku berharap ada naga terbang,\" keluh Felicia.",
+      "\"Naga itu apa?\" tanya Namae.",
+      "\"Makhluk super kuat dan super keren!\"",
+      "Sebelum Namae sempat bertanya lebih jauh, terdengar jeritan. Felicia mengira itu naga, tetapi ternyata seorang gadis yang tersungkur di tengah jalan sambil terisak. Ia tersandung batu, lalu kepalanya dijatuhi kotoran burung.",
+      "\"Belakangan aku sial terus,\" katanya lirih. Ia baru saja lolos dari maut, mungkin ini cara alam menyeimbangkan nasib. Felicia berusaha menghibur dengan kata-kata temannya, Yachiyo, soal jatuh delapan kali bangun tujuh kali. Kyoko meralatnya jadi jatuh tujuh kali, bangun delapan kali. Gadis itu menerima tisu sambil berterima kasih, lalu tersandung lagi.",
+      "\"Mungkin kita ada di Mitakihara yang sedang sial,\" gumam Kyoko.",
+      "## Episode 2",
+      "Sambil berjalan, Kyoko bergumam bahwa ia tak pernah menyangka akan menjadi Kioku. Felicia mengaku penjelasan A-Q soal itu tidak membuat semuanya lebih jelas.",
+      "\"Aku mengerti garis besarnya,\" kata Kyoko. Mereka memiliki semua ingatan dari setiap dunia, tetapi berada di Mitakihara yang tak mereka kenal.",
+      "\"Tepat sekali. Memspark ini tidak beraturan,\" kata A-Q yang tiba-tiba muncul di benak mereka. Felicia memekik kaget. A-Q menjelaskan bahwa ia tak pernah berniat meninggalkan mereka, tetapi Memspark yang berubah ini mengganggu sambungan telepati. Ia juga mengingatkan bahwa hanya Kioku yang bisa melihat dan mendengar Namae, dan bahwa mereka sebaiknya berbicara lewat telepati di depan orang lain. Sebagai Penjaga Lighthouse, Namae peka terhadap banyak hal, dan kemampuan itu berguna dalam penyelidikan.",
+      "Namae mencoba merasakan sekitarnya. \"Ada sebuah kehadiran. Aku pernah merasakannya di sekitar Sayaka.\"",
+      "\"Mami?\" tanya Felicia. Kyoko tidak melihat siapa pun, sampai ia mengenali dua orang di kejauhan. \"Itu teman sekelas Sayaka.\"",
+      "Kyoko menghampiri mereka. Hitomi Shizuki tampak bingung, dan Kyosuke Kamijo curiga bagaimana orang asing tahu bahwa mereka kenal Sayaka. Kyoko menjawab santai bahwa Sayaka pernah memperlihatkan foto upacara penerimaan siswa baru tempat mereka semua kebetulan berkumpul. Kyosuke mengangguk, dan kecurigaannya mereda. \"Semua yang pernah diketahui setiap versi diriku ada di kepalaku,\" bisik Kyoko pada Felicia. \"Ternyata berguna juga jadi Kioku.\"",
+      "Sayaka tidak masuk sekolah hari itu, dan guru tidak memberi keterangan. Bolos bukan gaya Sayaka, kata Hitomi, sebab ia terlalu baik, ceria, dan berprinsip. Kyosuke, yang mengenal Sayaka sejak kecil dan selalu ditemani Sayaka di setiap resitalnya, yakin pasti ada alasan kuat. Mungkin urusan keluarga.",
+      "Kyoko mengaku hanya khawatir karena Sayaka belakangan bersikap berbeda, lalu cepat-cepat menepisnya. Kyosuke pamit menuju toko CD. Hitomi menambahkan bahwa ini kencan pertama mereka setelah sekian lama, dan bahwa berkat Sayaka-lah mereka bisa bersama. Felicia terperangah mendengarnya.",
+      "Setelah keduanya pergi, Hitomi tiba-tiba kembali. Ia mengaku pernah melihat Mami, tetapi sudah lama tidak. Belakangan Mami sering absen atau pulang lebih awal, dan tampak gelisah. Bukan lelah, lebih seperti kesal.",
+      "\"Tidak ada Sayaka, tidak ada Mami,\" gerutu Felicia.",
+      "\"Hari sudah gelap. Mungkin mereka berburu Witch,\" ujar Kyoko.",
+      "\"Tadi kamu menjatuhkan sesuatu?\" tanya Namae. Felicia menggeleng dan bilang Namae hanya salah lihat. Namae menoleh ke belakang, ke arah yang tampak kosong. *Apa tadi ada seseorang? Atau aku hanya membayangkannya?*",
+      "## Episode 3",
+      "Namae tersentak. Ada Witch di dekat sini. \"Mami mungkin ada di sana!\" seru Felicia. Kyoko mengangguk, dan mereka bergegas pergi.",
+      "Mereka bertarung seperti biasa, tetapi Namae ingin ikut berguna sekarang setelah bisa berbicara. \"Kami bertarung dengan cara kami, kamu bantu semampumu,\" kata Kyoko.",
+      "Baru saja Namae bersiap, tembakan Felicia meledak di dekatnya. \"Perhatikan sekitarmu, nanti kamu terluka!\" bentak Kyoko. Namae meminta maaf. Ia bertanya apakah Witch bisa melihatnya, dan A-Q menjawab bahwa Witch tidak bisa melihatnya, tetapi tetap bisa menyentuhnya. Karena itu Kyoko dan Felicia harus melindunginya sambil bertarung.",
+      "Namae memperhatikan pertarungan. *Pasti ada yang bisa kulakukan.* Dengan kepekaannya, ia melihat salah satu Familiar tampak lebih mudah dikalahkan, mungkin hanya perlu sebentar saja. Tetapi bagaimana memberitahu mereka?",
+      "\"Felicia, Familiar yang di sana itu, mungkin lebih baik...\"",
+      "\"Hah? Ngomong apa?\"",
+      "\"Blondie! Di belakangmu!\" teriak Kyoko.",
+      "Serangan menghantam Felicia hingga ia terlempar. \"Felicia!\" Namae berlari mendekat. Felicia meringis, tetapi tertawa bahwa ia tak akan tumbang secepat itu. Namae menunduk. *Ini salahku.* Kyoko memanggilnya, tetapi Namae seolah tak mendengar.",
+      "Kyoko berdiri di depan mereka. \"Kalian berdua, di belakangku! Aku akan menggunakan sihirku...\"",
+      "Kalimatnya terputus. \"Pergi dari sini!\" teriak sebuah suara.",
+      "Namae mengenali perasaan itu, kehadiran seorang Magical Girl yang dikenalnya. Sosok itu menghabisi Witch dalam sekejap. \"Fiuh, nyaris saja,\" kata Mami Tomoe.",
+      "\"Kamu...\"",
+      "\"Kyoko, sudah lama. Kupikir daerah buruanmu di Kazamino. Kenapa kamu ada di sini?\"",
+      "Kyoko teringat pesan A-Q dan memilih mengikuti alurnya. \"Sedang mengurus sesuatu.\"",
+      "Namae merasakan hubungan keduanya. Tidak dekat, tetapi juga tidak buruk. \"Sepertinya kali ini kamu punya teman sesama Magical Girl,\" kata Mami. \"Kupikir kamu tipe penyendiri.\"",
+      "\"Cuma kerja sama sementara.\"",
+      "\"Kalian tampak akrab,\" ujar Mami. Felicia hendak menjawab soal Penjaga Lighthouse, tetapi Kyoko menahannya. Mami tidak bisa melihat Namae, dan Mami hanya bertanya-tanya apa itu penjaga lighthouse sebelum Kyoko mengalihkan topik. Ia bertanya apakah Mami kini berburu sendirian.",
+      "\"Kamu bertanya begitu di depan temanmu? Agak kejam, tahu.\"",
+      "\"Mami kelihatan capek,\" bisik Namae. Tanpa sadar Kyoko mengulanginya keras-keras. Mami tersenyum letih. \"Ketahuan, ya. Maaf, aku tak bermaksud melampiaskannya padamu.\"",
+      "Belakangan ia terus bertarung melawan Witch, bahkan sampai membolos sekolah. Menurut Mami, ada satu Magical Girl lain di Mitakihara, tetapi ia tidak boleh membiarkan gadis itu mengalahkan Witch. Jadi ia harus tiba di sana lebih dulu.",
+      "\"Hah...?\" gumam Kyoko.",
+      "## Episode 4",
+      "\"Kamu menguasai semua Witch sendirian? Itu bukan dirimu,\" kata Kyoko. Dulu Mami membenci Magical Girl yang berebut Grief Seed. \"Mami, kamu kenapa?\"",
+      "*Sikap Mami ini mungkin berkaitan dengan runtuhnya Kioku Sayaka,* pikir Kyoko.",
+      "\"Mungkin saja. Kondisi Mami Tomoe bisa jadi penyebab anomali di Memspark ini...\" Suara A-Q terputus-putus. Sambungan telepati mereka memburuk.",
+      "\"Kamu salah paham,\" kata Mami. Tetapi ia balik menilai Kyoko. Bukan gayanya mengkhawatirkan Grief Seed gadis yang tak dikenal. Cara bertarungnya tadi pun aneh, hanya bertahan dan sibuk mencemaskan belakangnya, padahal lawannya bukan Witch, melainkan Familiar.",
+      "\"Aku...\" Kyoko tak bisa membalas.",
+      "Yang jelas, kata Mami, sebagai Magical Girl Mitakihara ia tak bisa membiarkan gadis itu berbuat sesukanya. Bukan karena gadis itu berbuat jahat, tetapi setiap kali ia menyelamatkan orang dari Witch, ia berakhir...",
+      "\"Mami!\" Mami roboh sebelum kalimatnya selesai.",
+      "\"Dia pingsan!\" seru Namae. Kyoko menduga Mami kelelahan setelah memburu begitu banyak Witch.",
+      "\"Apa yang harus kita lakukan?\" tanya Namae. Suara A-Q terpotong-potong: tak ada yang bisa ia lakukan dari sana, sambungan makin buruk, jangan berharap terlalu tinggi. Lalu suaranya hilang sama sekali.",
+      "\"Sekarang bagaimana? Ada Magical Girl gila di luar sana,\" kata Felicia.",
+      "\"Aku tidak tahu,\" gumam Namae.",
+      "Kyoko menatapnya. \"Ingat kata-kataku dulu? Soal mengambil keputusan yang benar saat penting?\" Ia tak minta Namae memutuskan segalanya, tetapi Namae adalah bos mereka, dan dengan A-Q tak ada, ini keputusan Namae.",
+      "\"Aku?\"",
+      "Kyoko menghela napas. \"Maaf bilang begini, tapi kalau kamu terus begitu, aku tak bisa bekerja sama denganmu lagi.\"",
+      "\"Apa?\"",
+      "\"Aku akan pergi sendiri. Aku harus menjaga Mami. Kami memang terikat padamu sebagai Kioku, tapi kalau kamu tak bisa memimpin, aku akan melakukannya sendiri. Aku akan menyelamatkan Mami dan Sayaka sendirian. Karena...\""
+    ],
+    [
+      "## Episode 1",
+      "\"Hei! Kenapa kabur?!\" teriak Sayaka Miki sambil terus mengejar.",
+      "\"Cewek ini GILA!\" seru Felicia. \"Walaupun dia tidak bisa melihatmu, serangannya tetap bisa kena, kan?\"",
+      "\"B-benar!\" jawab Namae.",
+      "\"Aku akan melindungimu, tapi kamu harus...\" Felicia tak sempat menyelesaikan kalimatnya. Kalau satu saja serangan itu mengenai Namae, ia akan tercabik-cabik.",
+      "\"Oh tidak, oh tidak, oh tidak... Mundur strategis! MUNDUR STRATEGIS!\"",
+      "\"Kita TIDAK BISA, dasar bodoh!\"",
+      "\"Tidak ada yang mustahil!\" Namae menguatkan diri. Ia tak boleh kalah di sini. Masih banyak yang harus ia lakukan. Ia harus melindungi Lighthouse dan para Magical Girl. Namae menarik napas dalam-dalam, lalu berteriak, \"KYOKOOO! TOLONG KAMI!\"",
+      "\"Serius? Setelah semua omongan tadi? Kamu tidak punya harga diri?\" protes Felicia.",
+      "\"Tapi... tapi!\"",
+      "\"Ya ampun, bisa tidak sih tidak berisik begitu?\"",
+      "Kyoko Sakura muncul. \"Aku datang mengira bakal ketemu Witch, bukan dia.\"",
+      "\"Kyoko! Kamu datang menyelamatkan kami?\"",
+      "\"Yah, melindungi Penjaga Lighthouse memang tugas kami. Lagi pula, ada yang harus mengurus Sayaka itu.\"",
+      "Felicia memperingatkan bahwa Sayaka benar-benar gila. Kyoko mengaku sudah mendengarnya dari Mami, tetapi Mami tak pernah menyinggung penampilannya. \"Kamu apakan dia sampai marah begitu? Ah, ceritakan nanti saja. Aku punya ide.\"",
+      "\"Kira-kira begitu. Ini kan Mitakihara yang tak beraturan,\" kata Kyoko, lalu menyapa Sayaka. \"Hei, Sayaka. Apa kabar? Dandananmu kenapa, habis dandan ulang?\"",
+      "\"Kamu... Bukannya sudah kubilang aku tak mau melihat mukamu lagi!\"",
+      "Kyoko tertawa kecil. Ia dan Sayaka memang ditakdirkan saling menjegal. Sayaka menyahut bahwa ia tak paham maksudnya. Yang jelas, ia punya urusan dengan Magical Girl itu, yang memulai perkelahian lalu kabur.",
+      "\"Benar, Blondie?\"",
+      "\"Bu-bukan salahku! Dia bilang orang-orang harus kebagian jatah keberuntungan yang adil, dan teman-temannya pantas diserang!\"",
+      "\"Separah itu, ya?\" gumam Kyoko.",
+      "\"Sayaka kelihatan marah sekali padamu,\" bisik Namae. \"Apa yang terjadi?\"",
+      "\"Mana kutahu. Mungkin karena kami tak sepaham soal arah para Magical Girl.\"",
+      "\"Jadi apa rencanamu?\" tanya Felicia.",
+      "\"Aku berharap Sayaka di sini akur denganku, tapi gagal. Jadi... kabur!\"",
+      "\"Hah?!\"",
+      "\"Argh! Kamu ini kenapa sih?!\" teriak Sayaka.",
+      "Mereka menyelinap lewat jalan yang tak pernah Felicia sadari ada. Sayaka pun berhasil dikelabui. \"Itu berkat Mami dan lorong rahasianya,\" kata Kyoko. Sebenarnya yang diberi tahu Mami adalah versi Kyoko yang lain. \"Sekarang, ayo bahas apa yang sudah kita temukan.\"",
+      "## Episode 2",
+      "\"Magical Girl Kemalangan...\" gumam Namae.",
+      "\"Jadi itu Sayaka,\" kata Felicia.",
+      "Kyoko menyimpulkan bahwa dari cerita Hitomi Shizuki dan ucapan Sayaka tadi, dialah pelakunya. Anomali itu adalah Sayaka sendiri. Namae teringat kata-kata Hitomi: ia telah diselamatkan, jadi kini harus menyelamatkan orang lain, membayar harga atas keberuntungannya. Itu hanya adil.",
+      "\"Jadi Hitomi bersikap begitu gara-gara Sayaka?\"",
+      "\"Ya. Dan Sayaka sendiri tidak sadar.\"",
+      "Kalau begitu, anomali pada Sayaka inilah yang membuat Kioku Sayaka runtuh. Kyoko yakin 99 persen. Karena itu mereka harus mengembalikan Sayaka seperti semula. Felicia mengusulkan menghajarnya sampai waras, tetapi Kyoko berkata jika Sayaka tak sadar, mereka harus membuatnya sadar.",
+      "\"Jadi kamu mau membantu kami?\" tanya Namae.",
+      "Felicia teringat sesuatu. \"Bukannya kamu marah pada Penjaga Lighthouse karena bertindak sendirian?\"",
+      "Kyoko teringat kata-katanya sendiri saat ia hendak pergi. Namae menunduk. \"Maaf karena aku tidak berguna.\"",
+      "\"Jangan salah paham, aku bekerja sama bukan demi kamu. Aku cuma ingin menolong Sayaka,\" kata Kyoko. \"Tapi aku juga mendengar kamu berteriak minta tolong. Kamu selalu menunggu orang lain menyuruhmu. Kali ini kamu memutuskan sendiri dan bertindak. Perjalananmu masih panjang, tapi kamu berkembang.\"",
+      "\"Aku cuma lari dan minta tolong.\"",
+      "\"Itulah masalah amatir. Lari itu strategi yang sah. Namanya mundur strategis.\" Kyoko menambahkan, Namae bisa merasakan seberapa kuat seseorang, dan itu kemampuan yang hanya Namae miliki. \"Terus terang aku belum percaya menyerahkan nyawaku padamu, tapi kalau kita bekerja sama, mungkin kita bisa menyelamatkan Sayaka. Kalian lapar?\"",
+      "Ia melempar sesuatu. \"Tasty Bar!\" seru Felicia. \"Anggap itu tanda damai.\"",
+      "\"Jadi kamu sudah tidak marah? Kamu memaafkanku?\"",
+      "\"Aku memang tidak marah. Aku cuma ingin lihat seberapa besar tekadmu. Kamu sudah merenung, kan?\"",
+      "\"Sudah!\"",
+      "\"Cukup.\"",
+      "\"Kalau begitu, aku akan menyimpan tanda damai ini baik-baik.\"",
+      "Kyoko tersenyum. \"Dasar aneh.\" Lalu ia mengajak mereka mencari Sayaka. Ia ingin bicara dengannya. Ia tidak sepolos itu untuk percaya bicara bisa menyelesaikan segalanya, tapi ia tetap harus mencoba. Ia tak mau menyesal di kemudian hari. Sayaka memang keras kepala, tapi tidak sebodoh itu sampai tak mau mendengar.",
+      "\"Seperti kata Iroha, 'Bicarakan dulu baik-baik',\" kata Felicia.",
+      "\"Kalau tidak berhasil?\" tanya Namae.",
+      "\"Kita cari rencana baru.\"",
+      "\"Permisi...\" Suara asing memotong pembicaraan mereka. Kyoko menoleh, dan di sana berdiri Madoka Kaname.",
+      "## Episode 3",
+      "\"Anu... sepertinya ini jatuh di dekat sekolah,\" kata Madoka sambil mengulurkan sesuatu.",
+      "\"Sapi mini-ku!\" seru Felicia. Ia menjelaskan bahwa ia punya sapi kesayangan yang terlalu besar untuk dibawa-bawa, jadi Iroha dan yang lain membuatkan versi mungil untuknya.",
+      "Madoka meminta maaf karena baru sekarang mengembalikannya. Ia sempat mengejar Felicia tetapi kehilangan jejak, dan hampir menyerahkannya ke polisi. \"Tapi aku senang bisa mengembalikannya.\"",
+      "\"Terima kasih! Kamu tak tahu betapa berartinya ini!\"",
+      "\"Kalau begitu aku permisi...\"",
+      "\"Tunggu!\" Kyoko menahannya. \"Kamu teman sekelas Sayaka Miki, kan?\"",
+      "\"I-iya. Apa kamu temannya Sayaka?\"",
+      "\"Semacam itu. Belakangan ini, kamu lihat sesuatu yang aneh darinya?\"",
+      "Madoka berkata Sayaka memang sering absen, tanpa alasan yang jelas. Ia mengira Sayaka sedang tidak enak badan. Felicia menyahut bahwa mereka kelihatan berteman. Madoka membenarkan, mereka berteman sejak kecil.",
+      "\"Sahabat, kan?\"",
+      "\"Eh?\" Madoka menunduk. Ia selalu menganggap Sayaka teman baik, tetapi Sayaka ramah pada semua orang. Ia ragu Sayaka menganggapnya sahabat.",
+      "\"Penjaga Lighthouse, dia jujur?\" bisik Kyoko.",
+      "\"Ya. Kurasa dia jujur,\" jawab Namae. Hubungan Madoka dan Sayaka berbeda dari ingatan-ingatan lain, dekat sekaligus jauh.",
+      "Felicia bertanya apakah Sayaka pernah mengatakan atau melakukan sesuatu yang janggal. Madoka ragu sejenak. Mungkin Sayaka hanya sedang membicarakan anime atau gim, tetapi ia pernah berkata pada Madoka dan Hitomi: seandainya ada pahlawan bernama Magical Girl yang diam-diam melindungi semua orang, siapa yang melindungi mereka? Ia tampak sangat sedih saat mengatakannya.",
+      "Namae teringat Hitomi yang pernah bertanya, apakah Madoka pernah mendengar tentang Magical Girl. \"Jadi itu alasannya,\" gumam Kyoko.",
+      "\"Apakah kalian mau menolong Sayaka?\" tanya Madoka tiba-tiba. Ia sangat berterima kasih pada Sayaka yang selalu baik dan selalu ada untuknya. Ia bangga punya seseorang sekeren itu sebagai tem... ia tak menyelesaikan kalimatnya. Sayaka takkan pernah mengeluh pada orang seperti dirinya, tetapi Madoka bisa merasakan ada yang mengganjal. \"Jadi tolong, jagalah dia untukku.\"",
+      "\"Aneh sekali minta begitu pada orang asing,\" kata Kyoko.",
+      "\"Mungkin. Tapi entah kenapa aku merasa kalian mengenal Sayaka lebih baik daripada aku.\"",
+      "\"Itu tidak...\" Kyoko terdiam. \"Ah.\"",
+      "\"Sayaka datang,\" bisik Namae.",
+      "Felicia mengusulkan agar Madoka saja yang bicara pada Sayaka, tetapi Kyoko menolak. Madoka di sini bukan Magical Girl, dan mereka tak boleh melibatkannya. Mereka harus mengurusnya sendiri, dan menjauhkan Sayaka dari Madoka.",
+      "\"Di mana?\"",
+      "\"Ada Labirin Witch di depan,\" kata Namae.",
+      "\"Baik, di sanalah.\" Kyoko menoleh pada Madoka. \"Maaf, kami harus lari!\"",
+      "\"Terima kasih untuk sapi mini-ku!\" seru Felicia.",
+      "\"Tenang, kami akan menjaga Sayaka untukmu!\" janji Kyoko.",
+      "Sambil berlari, Felicia bertanya apakah benar Kioku Sayaka runtuh karena Sayaka yang satu ini. Kyoko mengiyakan, tetapi Sayaka bukan satu-satunya keanehan di Memspark ini. Ada kecelakaan Kyosuke Kamijo, hubungannya dengan Madoka Kaname, permohonan dan sihirnya, dan daftarnya terus memanjang. \"Apa membuat Sayaka normal kembali benar-benar menyelesaikan semua ini?\"",
+      "\"Terlalu banyak anomali!\" keluh Felicia.",
+      "\"Anomalinya ada di mana-mana,\" gumam Namae. \"Tapi mana yang muncul lebih dulu?\"",
+      "Kyoko tersentak. \"Tadi kamu bilang apa?\"",
+      "\"Anomalinya ada di mana-mana.\"",
+      "\"Bukan, sesudahnya.\"",
+      "\"Aku bertanya-tanya mana yang muncul lebih dulu.\"",
+      "Kyoko terdiam. Ia mengira anomalinya hanya yang terjadi sekarang. Tetapi bagaimana kalau sesuatu telah terjadi jauh sebelum semua ini?",
+      "\"Aaah! Sayaka tepat di belakang kita!\" jerit Felicia.",
+      "\"Sedikit lagi sampai!\" seru Namae.",
+      "\"Ayo!\"",
+      "Mereka berlari menuju Labirin Witch, dengan Sayaka membayangi di belakang."
+    ],
+    "coming soon",
+    "still coming soon"
+  ];
+  var judul=[
+    "Prolog: Merasakan Diriku",
+    "Chapter 1 Part I: aku ingin melindungi mereka",
+    "Chapter 1 Part II: Teori Kebahagiaan Relatif",
+    "Chapter 1 Part iv",
+    "Chapter 1 Part v"
+  ];
+  var chapters=[];
+  for(var i=1;i<=N;i++){
+    chapters.push({t:judul[i-1],p:[].concat(isi[i-1])});
+  }
+  var $=function(id){return document.getElementById(id)};
+  var pos=-1; // -1 awal, 0..N-1 chapter, N penutup
+
+  // bintang
+  var svg=$("stars"),ns="http://www.w3.org/2000/svg",h="";
+  for(var s=0;s<90;s++){
+    h+='<circle class="star" cx="'+(Math.random()*100).toFixed(2)+'%" cy="'+(Math.random()*100).toFixed(2)+
+       '%" r="'+(Math.random()*1.1+.3).toFixed(2)+'" style="animation-delay:'+(Math.random()*4).toFixed(2)+
+       's;animation-duration:'+(3+Math.random()*3).toFixed(2)+'s"/>';
+  }
+  svg.innerHTML=h;
+
+  function save(){try{localStorage.setItem(KEY,String(pos))}catch(e){}}
+  function load(){try{var v=parseInt(localStorage.getItem(KEY),10);if(!isNaN(v)&&v>=-1&&v<=N)return v}catch(e){}return -1}
+
+  function buildToc(el){
+    el.innerHTML="";
+    chapters.forEach(function(c,i){
+      var li=document.createElement("li"),b=document.createElement("button");
+      b.innerHTML='<span class="n">'+(i+1)+'</span><span>'+c.t+'</span>';
+      if(i===pos)b.className="cur";
+      b.onclick=function(){go(i)};
+      li.appendChild(b);el.appendChild(li);
+    });
+  }
+
+  function show(id){
+    ["v-home","v-chap","v-end"].forEach(function(v){$(v).classList.remove("on")});
+    void $(id).offsetWidth;
+    $(id).classList.add("on");
+  }
+
+  function go(i){
+    pos=Math.max(-1,Math.min(N,i));
+    if(pos===-1){show("v-home");buildToc($("toc-home"))}
+    else if(pos===N){show("v-end")}
+    else{
+      var c=chapters[pos];
+      $("chapterContent").innerHTML='<h2>'+c.t+'</h2>'+
+        c.p.map(function(x){var m=x.indexOf("## ")===0;x=x.replace(/\*(.+?)\*/g,"<em>$1</em>");return m?"<h3>"+x.slice(3)+"</h3>":"<p>"+x+"</p>"}).join("");
+      $("prevBtn").classList.toggle("disabled",pos===0);
+      $("jumpSelect").value=String(pos);
+      show("v-chap");
+    }
+    $("bar").style.width=(pos<0?0:Math.round((Math.min(pos+1,N))/N*100))+"%";
+    window.scrollTo(0,0);
+    save();
+  }
+
+  var sel=$("jumpSelect");
+  chapters.forEach(function(c,i){var o=document.createElement("option");o.value=i;o.textContent="Chapter "+(i+1)+" - "+c.t;sel.appendChild(o)});
+  sel.onchange=function(){go(parseInt(this.value,10))};
+  $("prevBtn").onclick=function(){if(pos>0)go(pos-1)};
+  $("nextBtn").onclick=function(){go(pos+1)};
+  $("start").onclick=function(){go(0)};
+  $("again").onclick=function(){go(-1)};
+  $("back").onclick=function(){go(N-1)};
+
+  buildToc($("toc-home"));
+  go(load());
+})();
+</script>
+</body>
+</html>
